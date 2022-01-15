@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lagou.dao.RoleMapper">
+    <select id="findAllRole" resultType="com.lagou.domain.Role" parameterType="com.lagou.domain.Role">
+        select * from roles
+        <where>
+            <if test="name !=null and name!=''">
+                and name=#{name}
+            </if>
+        </where>
+    </select>
+<!--    添加角色-->
+    <insert id="saveRole" parameterType="com.lagou.domain.Role">
+        insert into roles(code,name,description,created_time,updated_time,created_by,updated_by)
+        values(#{code},#{name},#{description},#{createdTime},#{updatedTime},#{createdBy},#{updatedBy})
+    </insert>
+<!--    修改角色-->
+    <update id="updateRole" parameterType="com.lagou.domain.Role">
+        update roles
+        <set>
+            <if test="code !=null and code !=''">
+                code=#{code},
+            </if>
+            <if test="name !=null and name !=''">
+                name=#{name},
+            </if>
+            <if test="description !=null and description !=''">
+                description=#{description},
+            </if>
+            <if test="updatedTime !=null">
+                updated_time=#{updatedTime},
+            </if>
+        </set>
+        <where><if test="id !=null and id !=''">id=#{id}</if></where>
+    </update>
+
+<!--    查询父子级菜单-->
+    <select id="findAllMenu" parameterType="int" resultMap="menu">
+        SELECT * FROM  menu  WHERE parent_id=#{id}
+    </select>
+    <resultMap id="menu" type="com.lagou.domain.Menu">
+        <id column="id" property="id"></id>
+        <result column="href" property="href"></result>
+        <result column="icon" property="icon"></result>
+        <result column="name" property="name"></result>
+        <result column="parent_id" property="parentId"></result>
+        <result column="description" property="description"></result>
+        <result column="orderNum" property="order_num"></result>
+        <result column="shown" property="shown"></result>
+        <result column="created_time" property="createdTime"></result>
+        <result column="updated_time" property="updatedTime"></result>
+        <result column="created_by" property="createdBy"></result>
+        <result column="updated_by" property="updatedBy"></result>
+        <collection property="subMenuList" ofType="com.lagou.domain.Menu" select="findAllMenu" column="id"></collection>
+    </resultMap>
+<!--           SELECT menu_id FROM role_menu_relation WHERE role_id=#{roleId}-->
+    <select id="findMenuByRoleId" parameterType="int" resultType="int">
+        SELECT m.id FROM roles r LEFT JOIN role_menu_relation rm ON r.id=rm.role_id LEFT JOIN menu m ON m.id=rm.menu_id WHERE r.id=#{roleId}
+    </select>
+
+    <delete id="deleteMenu" parameterType="int">
+        delete from role_menu_relation where role_id=#{role_id}
+    </delete>
+    
+    <insert id="RoleContextMenu" parameterType="com.lagou.domain.Role_menu_relation">
+        insert into role_menu_relation values(null,#{menuId},#{roleId},#{createdTime},#{updatedTime},#{createdBy},#{updatedby})
+    </insert>
+
+    <delete id="deleteRole" parameterType="int">
+        delete from roles where id=#{id}
+    </delete>
+<!--
+
+    //查询当前角色拥有的资源信息 -->
+    <select id="findResourceByRoleId" parameterType="int" resultType="com.lagou.domain.Resource">
+        SELECT r.* FROM resource r INNER JOIN role_resource_relation rr ON r.id=rr.resource_id  WHERE rr.role_id=#{roleId}
+    </select>
+
+<!--    查询当前角色拥有的资源分类信息-->
+    <select id="findResourceListByRoleId" parameterType="int" resultType="com.lagou.domain.ResourceCategory">
+        SELECT * FROM resource_category
+        WHERE id IN(SELECT DISTINCT r.category_id FROM resource r INNER JOIN role_resource_relation rr ON r.id=rr.resource_id  WHERE rr.role_id=#{roleId})
+    </select>
+<!--     //根据角色ID删除角色与资源的关联关系(操作中中间表 role_resource_relation)
+    public void deleteRoleResourceRelationByRoleId(Integer roleId);
+    //为角色分配菜单
+    public void roleContextResource(Role_Resource_Relation role_resource_relation);-->
+<!--  清空之前的联系-->
+    <delete id="deleteRoleResourceRelationByRoleId" parameterType="int">
+        delete from role_resource_relation where role_id=#{roleId}
+    </delete>
+<!--    添加新的联系-->
+    <insert id="roleContextResource" parameterType="com.lagou.domain.Role_Resource_Relation">
+        insert into role_resource_relation VALUES(null,#{resourceId},#{roleId},#{createdTime},#{updatedTime},#{createdBy},#{updatedBy})
+    </insert>
+</mapper>
