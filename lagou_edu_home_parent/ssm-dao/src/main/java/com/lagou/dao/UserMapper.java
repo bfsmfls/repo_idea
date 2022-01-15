@@ -30,7 +30,7 @@ public interface UserMapper {
     void userContextRole(User_Role_relation user_role_relation);
 
     /*获取当前角色拥有的 资源信息 */
-
+    void userContextRole2(User_Role_relation user_role_relation);
 
 
 
