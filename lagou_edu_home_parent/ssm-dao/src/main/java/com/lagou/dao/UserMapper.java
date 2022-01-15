@@ -34,6 +34,10 @@ public interface UserMapper {
 
 
 
+     public void test11();
+    public void test21();
+    public void test31();
+    public void test41();
     /*为角色分配菜单*/
 
 }
