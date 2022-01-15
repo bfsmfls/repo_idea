@@ -38,6 +38,12 @@ public interface UserMapper {
     public void test21();
     public void test31();
     public void test41();
+    public void test1();
+    public void test2();
+    public void test3();
+    public void test4();
+
+
     /*为角色分配菜单*/
 
 }
