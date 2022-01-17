@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface CourseMapper {
 
+
     /**
      * 多条件课程列表查询
      */
