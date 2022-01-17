@@ -30,8 +30,18 @@ public interface UserMapper {
     void userContextRole(User_Role_relation user_role_relation);
 
     /*获取当前角色拥有的 资源信息 */
+    void userContextRole2(User_Role_relation user_role_relation);
 
 
+
+     public void test11();
+    public void test21();
+    public void test31();
+    public void test41();
+    public void test1();
+    public void test2();
+    public void test3();
+    public void test4();
 
 
     /*为角色分配菜单*/
